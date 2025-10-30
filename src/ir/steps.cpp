@@ -5,6 +5,7 @@
 namespace Minuet::IR::Steps {
     static constexpr std::array<std::string_view, static_cast<std::size_t>(Op::last)> op_names = {
         "nop",
+        "make_str",
         "make_seq",
         "seq_obj_push",
         "seq_obj_pop",
@@ -47,6 +48,7 @@ namespace Minuet::IR::Steps {
         "constant",
         "temp",
         // "stack",
+        "heap",
     };
 
     auto ir_op_name(Op op) noexcept -> std::string_view {

@@ -105,6 +105,13 @@ namespace Minuet::Semantics {
                     .value_group = Enums::ValueGroup::temporary,
                     .readonly = true,
                 };
+            case Frontend::Lexicals::TokenType::literal_char:
+                return SemanticItem {
+                    .extra = {},
+                    .entity_kind = Enums::EntityKinds::primitive,
+                    .value_group = Enums::ValueGroup::temporary,
+                    .readonly = true,
+                };
             case Frontend::Lexicals::TokenType::literal_int:
                 return SemanticItem {
                     .extra = std::stoi(literal_lexeme),
@@ -118,6 +125,13 @@ namespace Minuet::Semantics {
                     .entity_kind = Enums::EntityKinds::primitive,
                     .value_group = Enums::ValueGroup::temporary,
                     .readonly = true,
+                };
+            case Frontend::Lexicals::TokenType::literal_string:
+                return SemanticItem {
+                    .extra = DudAttr {},
+                    .entity_kind = Enums::EntityKinds::sequence_flexible,
+                    .value_group = Enums::ValueGroup::temporary,
+                    .readonly = false,
                 };
             case Frontend::Lexicals::TokenType::identifier:
             default:

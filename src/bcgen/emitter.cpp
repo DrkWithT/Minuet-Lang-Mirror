@@ -24,7 +24,7 @@ namespace Minuet::Codegen {
     : m_result_chunks {}, m_active_ifs {}, m_active_loops {}, m_next_fun_id {0} {}
 
     auto Emitter::operator()(FullIR& ir) -> std::optional<Program> {
-        auto& [ir_cfgs, ir_constants, ir_main_fn_id] = ir;
+        auto& [ir_cfgs, ir_constants, ir_objects, ir_main_fn_id] = ir;
 
         auto cfg_count = 0;
         for (const auto& cfg : ir_cfgs) {
@@ -37,8 +37,9 @@ namespace Minuet::Codegen {
         }
 
         return Program {
-            .chunks = std::exchange(m_result_chunks, {}),
-            .constants = std::exchange(ir.constants, {}),
+            .chunks = std::move(m_result_chunks),
+            .constants = std::move(ir.constants),
+            .pre_objects = std::move(ir_objects),
             .entry_id = ir.main_id,
         };
     }
@@ -53,6 +54,7 @@ namespace Minuet::Codegen {
                 case AbsAddrTag::immediate: return ArgMode::immediate;
                 case AbsAddrTag::constant: return ArgMode::constant;
                 case AbsAddrTag::temp: return ArgMode::reg;
+                case AbsAddrTag::heap: return ArgMode::heap;
                 default: return {};
             }
         })(aa_tag);
@@ -305,6 +307,7 @@ namespace Minuet::Codegen {
         const auto [aa_0, aa_1, op] = oper_binary;
         const auto opcode_opt = ([](Op ir_op) noexcept -> std::optional<Opcode> {
             switch (ir_op) {
+                case Op::make_str: return Opcode::make_str;
                 case Op::jump_if: return Opcode::jump_if;
                 case Op::jump_else: return Opcode::jump_else;
                 case Op::call: return Opcode::call;

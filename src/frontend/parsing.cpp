@@ -77,7 +77,7 @@ namespace Minuet::Frontend::Parsing {
         const auto temp_token_copy = m_current;
         const auto [literal_beg, literal_end] = token_span(temp_token_copy);
 
-        if (match(temp_token_copy, TokenType::literal_false, TokenType::literal_true, TokenType::literal_int, TokenType::literal_double, TokenType::literal_string)) {
+        if (match(temp_token_copy, TokenType::literal_false, TokenType::literal_true, TokenType::literal_char, TokenType::literal_int, TokenType::literal_double, TokenType::literal_string)) {
             consume(lexer, src);
 
             return std::make_unique<Expr>(Expr {

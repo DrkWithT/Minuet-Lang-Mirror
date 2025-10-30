@@ -2,6 +2,7 @@
 #define MINUET_FAST_VALUE_HPP
 
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <vector>
 #include <string>
@@ -18,6 +19,7 @@ namespace Minuet::Runtime {
     enum class ObjectTag : uint8_t {
         dud,
         sequence,
+        string,
     };
 
     class HeapValueBase {
@@ -37,6 +39,7 @@ namespace Minuet::Runtime {
 
         virtual void freeze() noexcept = 0;
         virtual auto items() noexcept -> std::vector<FastValue>& = 0;
+        virtual auto clone() -> std::unique_ptr<HeapValueBase> = 0;
 
         virtual auto as_fast_value() noexcept -> FastValue = 0;
         virtual auto to_string() const& noexcept -> std::string = 0;
@@ -49,9 +52,11 @@ namespace Minuet::Runtime {
     enum class FVTag : uint8_t {
         dud,
         boolean,
+        chr8,
         int32,
         flt64,
         val_ref,
+        string,
         sequence,
     };
 
@@ -77,6 +82,11 @@ namespace Minuet::Runtime {
             m_data.scalar_v = static_cast<int>(b);
         }
 
+        constexpr FastValue(char c) noexcept
+        : m_data {}, m_tag {FVTag::chr8} {
+            m_data.scalar_v = c;
+        }
+
         constexpr FastValue(int i) noexcept
         : m_data {}, m_tag {FVTag::int32} {
             m_data.scalar_v = i;
@@ -92,8 +102,8 @@ namespace Minuet::Runtime {
             m_data.fv_p = ref_p;
         }
 
-        constexpr FastValue(HeapValuePtr obj_p) noexcept
-        : m_data {}, m_tag {FVTag::sequence} {
+        constexpr FastValue(HeapValuePtr obj_p, FVTag tag) noexcept
+        : m_data {}, m_tag {tag} {
             m_data.obj_p = obj_p;
         }
 
@@ -102,6 +112,7 @@ namespace Minuet::Runtime {
         }
 
         [[nodiscard]] auto to_scalar() noexcept -> std::optional<int>;
+        [[nodiscard]] auto to_scalar() const noexcept -> std::optional<int>;
         [[nodiscard]] auto to_object_ptr() noexcept -> HeapValuePtr;
 
         [[nodiscard]] constexpr auto is_none() const& -> bool {
@@ -113,6 +124,7 @@ namespace Minuet::Runtime {
         [[nodiscard]] explicit operator bool(this auto&& self) noexcept {
             switch (self.tag()) {
             case FVTag::boolean:
+            case FVTag::chr8:
             case FVTag::int32:
                 return self.m_data.scalar_v != 0;
             case FVTag::flt64:

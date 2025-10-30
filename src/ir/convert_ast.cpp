@@ -1,3 +1,4 @@
+#include <memory>
 #include <utility>
 #include <iostream>
 #include <print>
@@ -7,6 +8,7 @@
 #include "ir/steps.hpp"
 #include "ir/cfg.hpp"
 #include "ir/convert_ast.hpp"
+#include "runtime/string_value.hpp"
 
 /// TODO: fix emission to handle code with a flat BB after any whole conditional stmt??
 
@@ -27,8 +29,20 @@ namespace Minuet::IR::Convert {
     using IR::CFG::FullIR;
     using Utils::NameLocation;
 
+    auto Utils::convert_char_literal(const std::string& lexeme) -> Runtime::FastValue {
+        if (const auto c = lexeme[0]; c == '\\') {
+            switch (lexeme[1]) {
+            case 't': return '\t';
+            case 'n': return '\n';
+            default: return '\0';
+            }
+        } else {
+            return c;
+        }
+    }
+
     ASTConversion::ASTConversion(const Runtime::NativeProcRegistry* native_proc_ids)
-    : m_globals {}, m_locals {}, m_pending_links {}, m_result_cfgs {}, m_proto_consts {}, m_native_proc_ids {native_proc_ids}, m_proto_main_id {-1}, m_error_count {0}, m_next_func_aa {0}, m_next_local_aa {0}, m_prepassing {true} {}
+    : m_globals {}, m_locals {}, m_pending_links {}, m_result_cfgs {}, m_proto_consts {}, m_proto_heap_objs {}, m_native_proc_ids {native_proc_ids}, m_proto_main_id {-1}, m_error_count {0}, m_next_func_aa {0}, m_next_local_aa {0}, m_prepassing {true} {}
 
     auto ASTConversion::operator()(const Syntax::AST::FullAST& src_mapped_ast, const std::unordered_map<uint32_t, std::string>& source_map) -> std::optional<FullIR> {
         // 1. Prepass top-level definitions of functions, etc. to avoid forward declaration jank.
@@ -54,6 +68,7 @@ namespace Minuet::IR::Convert {
         return FullIR {
             .cfg_list = std::exchange(m_result_cfgs, {}),
             .constants = std::exchange(m_proto_consts, {}),
+            .pre_objects = std::exchange(m_proto_heap_objs, {}),
             .main_id = m_proto_main_id,
         };
     }
@@ -101,6 +116,17 @@ namespace Minuet::IR::Convert {
         m_globals.emplace(literal, next_aa);
 
         return next_aa;
+    }
+
+    auto ASTConversion::resolve_heap_obj_aa(std::unique_ptr<Runtime::HeapValueBase> obj_box) -> std::optional<Steps::AbsAddress> {
+        const auto next_preloaded_obj_id = static_cast<int16_t>(m_proto_heap_objs.size());
+
+        m_proto_heap_objs.emplace_back(std::move(obj_box));
+        
+        return AbsAddress {
+            .id = next_preloaded_obj_id,
+            .tag = AbsAddrTag::heap,
+        };
     }
 
     auto ASTConversion::record_name_aa(Utils::NameLocation mode, const std::string& name, AbsAddress aa) -> bool {
@@ -177,6 +203,23 @@ namespace Minuet::IR::Convert {
         return true;
     }
 
+    auto ASTConversion::emit_string(const std::string& text) -> std::optional<Steps::AbsAddress> {
+        auto str_obj = std::make_unique<Runtime::StringValue>(text);
+
+        if (auto dest_aa_opt = gen_temp_aa(); dest_aa_opt) {
+            auto str_aa = resolve_heap_obj_aa(std::move(str_obj));
+
+            m_result_cfgs.back().get_newest_bb().value()->steps.emplace_back(OperBinary {
+                .arg_0 = dest_aa_opt.value(),
+                .arg_1 = str_aa.value(),
+                .op = Op::make_str,
+            });
+
+            return dest_aa_opt;
+        }
+
+        return {};
+    }
 
     auto ASTConversion::emit_literal(const Syntax::Exprs::Literal& literal, std::string_view source) -> std::optional<AbsAddress> {
         const auto literal_tag = literal.token.type;
@@ -185,10 +228,14 @@ namespace Minuet::IR::Convert {
 
         if (literal_tag == TokenType::literal_false || literal_tag == TokenType::literal_true) {
             temp = resolve_constant_aa(literal_lexeme, Runtime::FastValue {literal_lexeme == "true"});
+        } else if (literal_tag == TokenType::literal_char) {
+            temp = resolve_constant_aa(literal_lexeme, Utils::convert_char_literal(literal_lexeme));
         } else if (literal_tag == TokenType::literal_int) {
             temp = resolve_constant_aa(literal_lexeme, Runtime::FastValue {std::stoi(literal_lexeme)});
         } else if (literal_tag == TokenType::literal_double) {
             temp = resolve_constant_aa(literal_lexeme, Runtime::FastValue {std::stod(literal_lexeme)});
+        } else if (literal_tag == TokenType::literal_string) {
+            temp = emit_string(literal_lexeme);
         } else if (literal_tag == TokenType::identifier) {
             temp = lookup_name_aa(literal_lexeme);
         } else {

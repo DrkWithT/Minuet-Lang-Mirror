@@ -115,16 +115,22 @@ namespace Minuet::Driver::Plugins {
     }
 
     void IRDumper::print_ir(const FullIR& full_ir) const {
-        const auto& [ir_cfgs, ir_constants, entry_id] = full_ir;
+        const auto& [ir_cfgs, ir_constants, ir_objects, entry_id] = full_ir;
 
         std::println("\n\033[1;33mComplete IR:\033[0m\n");
+
         std::println("\033[1;33mConstants:\033[0m\n");
 
-        auto constant_id = 0;
-
-        for (const auto& constant_val : ir_constants) {
+        for (auto constant_id = 0; const auto& constant_val : ir_constants) {
             std::println("const:{} = {}\n", constant_id, constant_val.to_string());
             ++constant_id;
+        }
+
+        std::println("\033[1;33mConstants:\033[0m\n");
+
+        for (auto object_id = 0; const auto& object_val : ir_objects) {
+            std::println("heap:{} = {}\n", object_id, object_val->to_string());
+            ++object_id;
         }
 
         std::println("\033[1;33mCFG's:\033[0m\n");

@@ -4,8 +4,9 @@
 ```
 <comment> = "#" <NON-HASH-SIGN>* "#"
 <spaces> = SP | TAB | CR | LF
+<char> = "'" ("\" ("t" | "n")) | <NON-SINGLE-QUOTE> "'"
 
-<literal> = <boolean> | <integer> | <double> | <string> | <tuple> | <list>
+<literal> = <boolean> | <char> | <integer> | <double> | <string> | <tuple> | <list>
 <tuple> = "[" ( <primary> ("," <primary>)* )? "]"
 <list> = "{" ( <primary> ("," <primary>)* )? "}"
 <primary> = <identifier> | <lambda> | "(" <compare> ")" | <literal>
@@ -37,8 +38,6 @@
 
 ### Unused
 ```
-; stmts
-<match> = "match" <identifier> "{" <pattern>* <default> "}"
-<pattern> = "pat" <literal> "->" <compare> <terminator>
-<default> = "_" "->" <compare> <terminator>
+; only works on tuples!
+<decomp> = "def" "[" <identifier> ("," <identifier>)* "]" "=" <identifier>
 ```

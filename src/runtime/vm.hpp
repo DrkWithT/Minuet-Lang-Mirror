@@ -53,6 +53,7 @@ namespace Minuet::Runtime::VM {
 
         void try_mark_and_sweep();
 
+        void handle_make_str(int16_t dest_reg, int16_t str_obj_id) noexcept;
         void handle_make_seq(int16_t dest_reg) noexcept;
         void handle_seq_obj_push(uint16_t metadata, int16_t dest, int16_t src_id, int16_t mode) noexcept;
         void handle_seq_obj_pop(uint16_t metadata, int16_t dest, int16_t src_id, int16_t mode) noexcept;

@@ -39,6 +39,7 @@ namespace Minuet::Frontend::Lexing {
             case '\0': return lex_single(Lexicals::TokenType::eof, sv);
             case '#': return lex_between(peek_0, Lexicals::TokenType::comment, sv);
             case '\"': return lex_between(peek_0, Lexicals::TokenType::literal_string, sv);
+            case '\'': return lex_char(sv);
             case '[': return lex_single(Lexicals::TokenType::open_bracket, sv);
             case ']': return lex_single(Lexicals::TokenType::close_bracket, sv);
             case '{': return lex_single(Lexicals::TokenType::open_brace, sv);
@@ -151,6 +152,52 @@ namespace Minuet::Frontend::Lexing {
 
         return Lexicals::Token {
             .type = Lexicals::TokenType::spaces,
+            .start = temp_begin,
+            .end = temp_end,
+            .line = temp_ln,
+            .col = temp_col,
+        };
+    }
+
+    auto Lexer::lex_char(std::string_view sv) noexcept -> Lexicals::Token {
+        ++m_pos;
+
+        const auto temp_begin = m_pos;
+        auto temp_end = m_pos;
+        const auto temp_ln = m_line;
+        const auto temp_col = m_col;
+        auto escapes = 0;
+        auto escapes_valid = true;
+        auto size_valid = true;
+        auto closed = false;
+
+        while (!at_eof()) {
+            const auto c = sv[m_pos];
+
+            if (c == '\'' || c == '\n') {
+                size_valid = temp_end > temp_begin;
+                closed = true;
+                break;
+            }
+
+            if (c == '\\') {
+                ++escapes;
+
+                if (escapes > 1 || temp_end - temp_begin > 0) {
+                    escapes_valid = false;
+                }
+            }
+
+            ++m_end;
+            ++m_pos;
+        }
+
+        const auto deduced_tag = (closed && size_valid && escapes_valid)
+            ? Lexicals::TokenType::literal_char
+            : Lexicals::TokenType::unknown;
+
+        return Lexicals::Token {
+            .type = deduced_tag,
             .start = temp_begin,
             .end = temp_end,
             .line = temp_ln,

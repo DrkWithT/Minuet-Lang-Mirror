@@ -27,6 +27,8 @@ namespace Minuet::IR::Convert {
             global_function_slot,
             local_slot,
         };
+
+        [[nodiscard]] auto convert_char_literal(const std::string& lexeme) -> Runtime::FastValue;
     }
 
 
@@ -44,12 +46,14 @@ namespace Minuet::IR::Convert {
         [[nodiscard]] auto gen_temp_aa() -> std::optional<Steps::AbsAddress>;
 
         [[nodiscard]] auto resolve_constant_aa(const std::string& literal, Runtime::FastValue value) -> std::optional<Steps::AbsAddress>;
+        [[nodiscard]] auto resolve_heap_obj_aa(std::unique_ptr<Runtime::HeapValueBase> obj_box) -> std::optional<Steps::AbsAddress>;
         [[nodiscard]] auto record_name_aa(Utils::NameLocation mode, const std::string& name, Steps::AbsAddress aa) -> bool;
         [[nodiscard]] auto lookup_name_aa(const std::string& name) noexcept -> std::optional<Steps::AbsAddress>;
 
         void add_cfg();
         [[nodiscard]] auto apply_pending_links() -> bool;
 
+        [[nodiscard]] auto emit_string(const std::string& text) -> std::optional<Steps::AbsAddress>;
         [[nodiscard]] auto emit_literal(const Syntax::Exprs::Literal& literal, std::string_view source) -> std::optional<Steps::AbsAddress>;
         [[nodiscard]] auto emit_sequence(const Syntax::Exprs::Sequence& sequence, std::string_view source) -> std::optional<Steps::AbsAddress>;
         [[nodiscard]] auto emit_unary(const Syntax::Exprs::Unary& unary, std::string_view source) -> std::optional<Steps::AbsAddress>;
@@ -73,6 +77,7 @@ namespace Minuet::IR::Convert {
         std::queue<Utils::BBLink> m_pending_links;
         std::vector<CFG::CFG> m_result_cfgs;
         std::vector<Runtime::FastValue> m_proto_consts;
+        std::vector<std::unique_ptr<Runtime::HeapValueBase>> m_proto_heap_objs;
         const Runtime::NativeProcRegistry* m_native_proc_ids;
         int m_proto_main_id;
         int m_error_count;

@@ -3,17 +3,39 @@
 
 namespace Minuet::Runtime {
     auto FastValue::to_scalar() noexcept -> std::optional<int> {
-        if (m_tag == FVTag::int32) {
+        switch (m_tag) {
+        case FVTag::boolean:
+            return m_data.scalar_v & 0b1;
+        case FVTag::chr8:
+            return m_data.scalar_v & 0x0000007f;
+        case FVTag::int32:
             return m_data.scalar_v;
+        default:
+            return {};
         }
+    }
 
-        return {};
+    auto FastValue::to_scalar() const noexcept -> std::optional<int> {
+        switch (m_tag) {
+        case FVTag::boolean:
+            return m_data.scalar_v & 0b1;
+        case FVTag::chr8:
+            return m_data.scalar_v & 0x0000007f;
+        case FVTag::int32:
+            return m_data.scalar_v;
+        default:
+            return {};
+        }
     }
 
     auto FastValue::to_object_ptr() noexcept -> HeapValuePtr {
-        return (m_tag == FVTag::sequence)
-            ? m_data.obj_p
-            : nullptr;
+        switch (m_tag) {
+            case FVTag::sequence:
+            case FVTag::string:
+                return m_data.obj_p;
+            default:
+                return nullptr;
+        }
     }
 
     auto FastValue::negate() & -> bool {
@@ -47,6 +69,7 @@ namespace Minuet::Runtime {
             m_data.dud = 0;
             break;
         case FVTag::boolean:
+        case FVTag::chr8:
         case FVTag::int32:
             m_data.scalar_v = arg.m_data.scalar_v;
             break;
@@ -65,6 +88,7 @@ namespace Minuet::Runtime {
         }
 
         m_tag = arg_tag;
+
         return true;
     }
 
@@ -334,7 +358,7 @@ namespace Minuet::Runtime {
 
         switch (self_tag) {
         case FVTag::boolean:
-            return m_data.scalar_v == arg.m_data.scalar_v;
+        case FVTag::chr8:
         case FVTag::int32:
             return m_data.scalar_v == arg.m_data.scalar_v;
         case FVTag::flt64:
@@ -358,6 +382,7 @@ namespace Minuet::Runtime {
         }
 
         switch (self_tag) {
+        case FVTag::chr8:
         case FVTag::int32:
             return m_data.scalar_v < arg.m_data.scalar_v;
         case FVTag::flt64:
@@ -379,6 +404,7 @@ namespace Minuet::Runtime {
         }
 
         switch (self_tag) {
+        case FVTag::chr8:
         case FVTag::int32:
             return m_data.scalar_v > arg.m_data.scalar_v;
         case FVTag::flt64:
@@ -400,6 +426,7 @@ namespace Minuet::Runtime {
         }
 
         switch (self_tag) {
+        case FVTag::chr8:
         case FVTag::int32:
             return m_data.scalar_v <= arg.m_data.scalar_v;
         case FVTag::flt64:
@@ -421,6 +448,7 @@ namespace Minuet::Runtime {
         }
 
         switch (self_tag) {
+        case FVTag::chr8:
         case FVTag::int32:
             return m_data.scalar_v >= arg.m_data.scalar_v;
         case FVTag::flt64:
@@ -438,12 +466,15 @@ namespace Minuet::Runtime {
         switch (tag()) {
         case FVTag::boolean:
             return std::format("{}", m_data.scalar_v != 0);
+        case FVTag::chr8:
+            return std::format("'{}'", static_cast<char>(m_data.scalar_v & 0x7f));
         case FVTag::int32:
             return std::format("{}", m_data.scalar_v);
         case FVTag::flt64:
             return std::format("{}", m_data.dbl_v);
         case FVTag::val_ref:
             return std::format("ref(FastValue({}))", m_data.fv_p->to_string());
+        case FVTag::string:
         case FVTag::sequence:
             return m_data.obj_p->to_string();
         case FVTag::dud:
