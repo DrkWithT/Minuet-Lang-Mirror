@@ -27,6 +27,7 @@ namespace Minuet::Frontend::Lexicals {
         literal_true,
         literal_int,
         literal_double,
+        literal_char,
         literal_string,
         oper_times,
         oper_slash,

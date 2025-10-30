@@ -56,6 +56,7 @@ namespace Minuet::Frontend::Lexing {
         [[nodiscard]] auto lex_single(Lexicals::TokenType tag, std::string_view sv) noexcept -> Lexicals::Token;
         [[nodiscard]] auto lex_between(char delim, Lexicals::TokenType tag, std::string_view sv) noexcept -> Lexicals::Token;
         [[nodiscard]] auto lex_spaces(std::string_view sv) noexcept -> Lexicals::Token;
+        [[nodiscard]] auto lex_char(std::string_view sv) noexcept -> Lexicals::Token;
         [[nodiscard]] auto lex_numeric(std::string_view sv) noexcept -> Lexicals::Token;
         [[nodiscard]] auto lex_operator(std::string_view sv) noexcept -> Lexicals::Token;
         [[nodiscard]] auto lex_word(std::string_view sv) noexcept -> Lexicals::Token;
