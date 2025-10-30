@@ -227,20 +227,26 @@ namespace Minuet::Runtime::VM {
     }
 
     void Engine::handle_make_str(int16_t dest_reg, int16_t str_obj_id) noexcept {
-        HeapValuePtr temp_str_ref = m_heap.try_create_value<StringValue>(
-            m_heap.get_objects()[str_obj_id]->to_string()
-        ).get();
         const auto abs_reg_id = m_rbp + dest_reg;
 
-        m_memory[abs_reg_id] = temp_str_ref;
+        m_memory[abs_reg_id] = {
+            m_heap.try_create_value<StringValue>(
+                m_heap.get_objects()[str_obj_id]->to_string()
+            ).get(),
+            FVTag::string
+        };
+
         ++m_rip;
     }
 
     void Engine::handle_make_seq(int16_t dest_reg) noexcept {
-        HeapValuePtr temp_obj_ref = m_heap.try_create_value<SequenceValue>().get();
         const auto abs_reg_id = m_rbp + dest_reg;
 
-        m_memory[abs_reg_id] = temp_obj_ref;
+        m_memory[abs_reg_id] = {
+            m_heap.try_create_value<SequenceValue>().get(),
+            FVTag::sequence,
+        };
+
         ++m_rip;
     }
 

@@ -73,8 +73,12 @@ namespace Minuet::Runtime {
         return true;
     }
 
-    auto StringValue::get_value([[maybe_unused]] std::size_t pos) -> std::optional<FastValue*> {
-        return {}; // NOTE: dud implementation for interface.
+    auto StringValue::get_value(std::size_t pos) -> std::optional<FastValue*> {
+        if (pos >= m_items.size()) {
+            return {};
+        }
+
+        return &m_items[pos];
     }
 
     void StringValue::freeze() noexcept {}
@@ -88,7 +92,7 @@ namespace Minuet::Runtime {
     }
 
     auto StringValue::as_fast_value() noexcept -> FastValue {
-        return {this};
+        return {this, FVTag::string};
     }
 
     auto StringValue::to_string() const& noexcept -> std::string {

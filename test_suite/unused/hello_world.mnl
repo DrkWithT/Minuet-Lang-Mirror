@@ -1,0 +1,13 @@
+import "./stdlib/stdio.mnl"
+
+fun main: [] => {
+    def msg = "Hello World!"
+
+    print(msg)
+
+    def w = msg.6
+
+    print(w)
+
+    return 0
+}

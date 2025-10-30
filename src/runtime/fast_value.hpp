@@ -39,7 +39,7 @@ namespace Minuet::Runtime {
 
         virtual void freeze() noexcept = 0;
         virtual auto items() noexcept -> std::vector<FastValue>& = 0;
-        virtual auto clone() -> std::unique_ptr<HeapValueBase>;
+        virtual auto clone() -> std::unique_ptr<HeapValueBase> = 0;
 
         virtual auto as_fast_value() noexcept -> FastValue = 0;
         virtual auto to_string() const& noexcept -> std::string = 0;
@@ -102,8 +102,8 @@ namespace Minuet::Runtime {
             m_data.fv_p = ref_p;
         }
 
-        constexpr FastValue(HeapValuePtr obj_p) noexcept
-        : m_data {}, m_tag {FVTag::sequence} {
+        constexpr FastValue(HeapValuePtr obj_p, FVTag tag) noexcept
+        : m_data {}, m_tag {tag} {
             m_data.obj_p = obj_p;
         }
 

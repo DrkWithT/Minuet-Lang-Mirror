@@ -86,7 +86,7 @@ namespace Minuet::Runtime {
     }
 
     auto SequenceValue::as_fast_value() noexcept -> FastValue {
-        return {this};
+        return {this, FVTag::sequence};
     }
 
     auto SequenceValue::to_string() const& noexcept -> std::string {

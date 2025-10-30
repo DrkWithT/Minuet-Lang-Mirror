@@ -29,9 +29,13 @@ namespace Minuet::Runtime {
     }
 
     auto FastValue::to_object_ptr() noexcept -> HeapValuePtr {
-        return (m_tag == FVTag::sequence)
-            ? m_data.obj_p
-            : nullptr;
+        switch (m_tag) {
+            case FVTag::sequence:
+            case FVTag::string:
+                return m_data.obj_p;
+            default:
+                return nullptr;
+        }
     }
 
     auto FastValue::negate() & -> bool {
