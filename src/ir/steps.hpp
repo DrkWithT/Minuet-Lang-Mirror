@@ -8,6 +8,7 @@
 namespace Minuet::IR::Steps {
     enum class Op : uint8_t {
         nop,
+        make_str,
         make_seq,
         seq_obj_push,
         seq_obj_pop,
@@ -53,6 +54,7 @@ namespace Minuet::IR::Steps {
         constant,
         temp,
         // stack,
+        heap,
         last,
     };
 
