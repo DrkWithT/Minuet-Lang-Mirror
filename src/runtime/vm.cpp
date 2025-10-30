@@ -7,6 +7,7 @@
 #include "runtime/fast_value.hpp"
 #include "runtime/bytecode.hpp"
 #include "runtime/sequence_value.hpp"
+#include "runtime/string_value.hpp"
 #include "runtime/vm.hpp"
 
 namespace Minuet::Runtime::VM {
@@ -15,7 +16,7 @@ namespace Minuet::Runtime::VM {
     static constexpr auto ok_res_value = static_cast<int>(Utils::ExecStatus::ok);
 
     Engine::Engine(Utils::EngineConfig config, Code::Program& prgm, std::any native_fn_table_wrap)
-    : m_heap {}, m_memory {}, m_call_frames {}, m_chunk_view {}, m_const_view {}, m_call_frame_ptr {nullptr}, m_native_funcs {}, m_rfi {}, m_rip {}, m_rbp {}, m_rft {}, m_rsp {}, m_consts_n {}, m_rrd {}, m_res {} {
+    : m_heap (std::exchange(prgm.pre_objects, {})), m_memory {}, m_call_frames {}, m_chunk_view {}, m_const_view {}, m_call_frame_ptr {nullptr}, m_native_funcs {}, m_rfi {}, m_rip {}, m_rbp {}, m_rft {}, m_rsp {}, m_consts_n {}, m_rrd {}, m_res {} {
         const auto [mem_limit, recur_depth_max] = config;
         const auto prgm_entry_fn_id = prgm.entry_id.value_or(-1);
 
@@ -63,6 +64,9 @@ namespace Minuet::Runtime::VM {
             switch (opcode) {
                 case Code::Opcode::nop:
                     ++m_rip;
+                    break;
+                case Code::Opcode::make_str:
+                    handle_make_str(args[0], args[1]);
                     break;
                 case Code::Opcode::make_seq:
                     handle_make_seq(args[0]);
@@ -222,12 +226,21 @@ namespace Minuet::Runtime::VM {
         }
     }
 
+    void Engine::handle_make_str(int16_t dest_reg, int16_t str_obj_id) noexcept {
+        HeapValuePtr temp_str_ref = m_heap.try_create_value<StringValue>(
+            m_heap.get_objects()[str_obj_id]->to_string()
+        ).get();
+        const auto abs_reg_id = m_rbp + dest_reg;
+
+        m_memory[abs_reg_id] = temp_str_ref;
+        ++m_rip;
+    }
+
     void Engine::handle_make_seq(int16_t dest_reg) noexcept {
-        HeapValuePtr temp_obj_ref = m_heap.try_create_value(ObjectTag::sequence).get();
+        HeapValuePtr temp_obj_ref = m_heap.try_create_value<SequenceValue>().get();
         const auto abs_reg_id = m_rbp + dest_reg;
 
         m_memory[abs_reg_id] = temp_obj_ref;
-
         ++m_rip;
     }
 

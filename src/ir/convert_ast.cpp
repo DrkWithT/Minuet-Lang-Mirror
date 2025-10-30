@@ -206,7 +206,7 @@ namespace Minuet::IR::Convert {
     auto ASTConversion::emit_string(const std::string& text) -> std::optional<Steps::AbsAddress> {
         auto str_obj = std::make_unique<Runtime::StringValue>(text);
 
-        if (auto dest_aa_opt = gen_temp_aa(); dest_aa_opt) {   
+        if (auto dest_aa_opt = gen_temp_aa(); dest_aa_opt) {
             auto str_aa = resolve_heap_obj_aa(std::move(str_obj));
 
             m_result_cfgs.back().get_newest_bb().value()->steps.emplace_back(OperBinary {
