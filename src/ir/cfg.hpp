@@ -1,6 +1,7 @@
 #ifndef MINUET_IR_CFG_HPP
 #define MINUET_IR_CFG_HPP
 
+#include <memory>
 #include <optional>
 #include <vector>
 
@@ -45,6 +46,7 @@ namespace Minuet::IR::CFG {
     struct FullIR {
         std::vector<CFG> cfg_list;
         std::vector<Runtime::FastValue> constants;
+        std::vector<std::unique_ptr<Runtime::HeapValueBase>> pre_objects;
         int main_id;
     };
 }

@@ -2,6 +2,7 @@
 #define MINUET_RUNTIME_BYTECODE_HPP
 
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <vector>
 #include <string_view>
@@ -11,6 +12,7 @@
 namespace Minuet::Runtime::Code {
     enum class Opcode : uint8_t {
         nop,
+        make_str,
         make_seq,
         seq_obj_push,
         seq_obj_pop,
@@ -78,6 +80,7 @@ namespace Minuet::Runtime::Code {
 
     struct Program {
         std::vector<Runtime::FastValue> constants;
+        std::vector<std::unique_ptr<Runtime::HeapValueBase>> pre_objects;
         std::vector<Chunk> chunks;
         std::optional<int> entry_id;
     };

@@ -5,6 +5,7 @@
 namespace Minuet::Runtime::Code {
     static constexpr std::array<std::string_view, static_cast<std::size_t>(Opcode::last)> opcode_names = {
         "nop",
+        "make_str",
         "make_seq",
         "seq_obj_push",
         "seq_obj_pop",
