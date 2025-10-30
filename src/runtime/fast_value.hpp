@@ -18,6 +18,7 @@ namespace Minuet::Runtime {
     enum class ObjectTag : uint8_t {
         dud,
         sequence,
+        string,
     };
 
     class HeapValueBase {
@@ -49,9 +50,11 @@ namespace Minuet::Runtime {
     enum class FVTag : uint8_t {
         dud,
         boolean,
+        chr8,
         int32,
         flt64,
         val_ref,
+        string,
         sequence,
     };
 
@@ -75,6 +78,11 @@ namespace Minuet::Runtime {
         constexpr FastValue(bool b) noexcept
         : m_data {}, m_tag {FVTag::boolean} {
             m_data.scalar_v = static_cast<int>(b);
+        }
+
+        constexpr FastValue(char c) noexcept
+        : m_data {}, m_tag {FVTag::chr8} {
+            m_data.scalar_v = c;
         }
 
         constexpr FastValue(int i) noexcept
@@ -102,6 +110,7 @@ namespace Minuet::Runtime {
         }
 
         [[nodiscard]] auto to_scalar() noexcept -> std::optional<int>;
+        [[nodiscard]] auto to_scalar() const noexcept -> std::optional<int>;
         [[nodiscard]] auto to_object_ptr() noexcept -> HeapValuePtr;
 
         [[nodiscard]] constexpr auto is_none() const& -> bool {
@@ -113,6 +122,7 @@ namespace Minuet::Runtime {
         [[nodiscard]] explicit operator bool(this auto&& self) noexcept {
             switch (self.tag()) {
             case FVTag::boolean:
+            case FVTag::chr8:
             case FVTag::int32:
                 return self.m_data.scalar_v != 0;
             case FVTag::flt64:
