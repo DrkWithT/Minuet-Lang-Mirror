@@ -137,13 +137,7 @@ namespace Minuet::Driver {
     auto Driver::generate_ir(const FullAST& ast) -> std::optional<FullIR> {
         ASTConversion ir_generator {&m_native_proc_ids};
 
-        auto ir_opt = ir_generator(ast, m_src_map);
-
-        if (!ir_opt) {
-            return {};
-        }
-
-        return ir_opt.value();
+        return ir_generator(ast, m_src_map);
     }
 
     auto Driver::apply_ir_passes([[maybe_unused]] IR::CFG::FullIR& ir) -> bool {
