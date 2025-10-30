@@ -21,10 +21,9 @@ _Minuet_ is a small, Python & C inspired language for simple programs. Unlike sh
  - [VM](/docs/vm.md)
 
 ### Roadmap
- - `0.7.0`: Add dictionaries
- - `0.8.0`: Add strings
-   - `String` type
-   - `string_do_xyz` intrinsic functions
+ - `0.7.1`: Add string helpers
+   - Add `string_xyz` stdlib natives.
+ - `0.8.0`: Add "objects"
  - `0.9.0`: Add program argument support (wrapped `char* argv[]` strings):
    - Add `[args]` intrinsics: `get_argv()`, `get_argc()`
  - `0.9.1`: Add file I/O support:
@@ -32,6 +31,7 @@ _Minuet_ is a small, Python & C inspired language for simple programs. Unlike sh
    - Add `append_to_file(fd, mode)` intrinsic
    - Add `close_file(fd)` intrinsic
  - `0.10.0`: Add simple x64 JIT for pure, global functions taking integers.
+   - Uses the `AsmJIT` framework.
    - Prototype JIT compiler using CFG IR, regalloc, etc.
    - Create a JIT compilation thread which runs in the background, adding a JIT version of a function when finished.
    - Add JIT / bytecode dispatch in `call` instruction.
