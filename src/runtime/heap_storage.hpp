@@ -1,6 +1,8 @@
 #ifndef MINUET_RUNTIME_HEAP_STORAGE_HPP
 #define MINUET_RUNTIME_HEAP_STORAGE_HPP
 
+#include <type_traits>
+#include <utility>
 #include <memory>
 #include <queue>
 #include <vector>
@@ -28,13 +30,27 @@ namespace Minuet::Runtime {
         std::size_t m_overhead;
         std::size_t m_next_id;
 
+        [[nodiscard]] auto allocate_id() -> std::size_t;
+
     public:
         /// NOTE: preload "heap literals" from IR & codegen stages here!
         HeapStorage();
 
+        HeapStorage(std::vector<std::unique_ptr<HeapValueBase>> preloads);
+
         [[nodiscard]] auto is_ripe() const& noexcept -> bool;
 
-        [[nodiscard]] auto try_create_value(ObjectTag obj_tag) noexcept -> std::unique_ptr<HeapValueBase>&;
+        template <typename ObjectType, typename ... Args> requires (std::is_constructible_v<ObjectType, Args...> && std::is_base_of_v<HeapValueBase, ObjectType>)
+        [[nodiscard]] auto try_create_value(Args&& ... args) noexcept (std::is_nothrow_constructible_v<ObjectType, Args...>) -> std::unique_ptr<HeapValueBase>& {
+            using naked_object_type = typename std::remove_extent<ObjectType>::type;
+
+            const auto next_object_id = allocate_id();
+
+            m_objects[next_object_id] = std::make_unique<naked_object_type>(std::forward<Args>(args)...);
+            m_overhead += cm_normal_obj_overhead;
+
+            return m_objects[next_object_id];
+        }
 
         [[nodiscard]] auto try_destroy_value(std::size_t id) noexcept -> bool;
 
