@@ -11,8 +11,6 @@
     - `RSP`: pointer of stack top
     - `RES`: error status
     - `RRD`: current recursion depth
-    - `RFV`: flag value (for comparisons) (**TODO: remove**)
- - Will have a heap and GC.
 
 ### Instruction Encoding (from LSB to MSB)
  - Opcode: 1 unsigned byte
@@ -26,10 +24,10 @@
  - Old `RBP` value
  - Old `RFT` value
  - Old `RES` value
- - Old `RFV` value (**TODO: remove**)
 
 ### Opcodes:
  - `nop`: does nothing except increment `RIP`
+ - `make_str <dest_reg> <preloaded-obj-imm>`: by its literal, creates a (_char-sequence-type_) string on the heap and loads its reference in a register
  - `make_seq <dest-reg>`: creates an empty sequence on the heap and loads its reference in a register
  - `seq_obj_push <dest-obj-reg> <src-value-reg> <mode>`: appends to the front or back of a sequence (modes 0 or 1) if it's flexible
  - `seq_obj_pop <dest-value-reg> <src-obj-reg> <mode>`: removes an item from the front or back of a sequence (modes 0 or 1) if it's flexible
