@@ -8,6 +8,7 @@
 namespace Minuet::Runtime {
     class StringValue : public HeapValueBase {
     public:
+        StringValue();
         StringValue(std::string s) noexcept;
 
         auto get_memory_score() const& noexcept -> std::size_t override;
@@ -23,6 +24,7 @@ namespace Minuet::Runtime {
 
         void freeze() noexcept override;
         auto items() noexcept -> std::vector<FastValue>& override;
+        auto clone() -> std::unique_ptr<HeapValueBase> override;
 
         auto as_fast_value() noexcept -> FastValue override;
         auto to_string() const& noexcept -> std::string override;

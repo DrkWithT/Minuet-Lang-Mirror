@@ -73,6 +73,18 @@ namespace Minuet::Runtime {
         m_frozen = true;
     }
 
+    auto SequenceValue::clone() -> std::unique_ptr<HeapValueBase> {
+        SequenceValue temp;
+
+        for (const auto& old_item : m_items) {
+            if (!temp.push_value(old_item)) {
+                return {};
+            }
+        }
+
+        return std::make_unique<SequenceValue>(std::move(temp));
+    }
+
     auto SequenceValue::as_fast_value() noexcept -> FastValue {
         return {this};
     }

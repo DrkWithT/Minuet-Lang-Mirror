@@ -35,6 +35,7 @@ namespace Minuet::Runtime {
         [[nodiscard]] auto get_value(std::size_t pos) -> std::optional<FastValue*> override;
 
         void freeze() noexcept override;
+        [[nodiscard]] auto clone() -> std::unique_ptr<HeapValueBase> override;
 
         [[nodiscard]] auto as_fast_value() noexcept -> FastValue override;
         [[nodiscard]] auto to_string() const& noexcept -> std::string override;

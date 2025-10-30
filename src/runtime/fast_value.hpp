@@ -2,6 +2,7 @@
 #define MINUET_FAST_VALUE_HPP
 
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <vector>
 #include <string>
@@ -38,6 +39,7 @@ namespace Minuet::Runtime {
 
         virtual void freeze() noexcept = 0;
         virtual auto items() noexcept -> std::vector<FastValue>& = 0;
+        virtual auto clone() -> std::unique_ptr<HeapValueBase>;
 
         virtual auto as_fast_value() noexcept -> FastValue = 0;
         virtual auto to_string() const& noexcept -> std::string = 0;

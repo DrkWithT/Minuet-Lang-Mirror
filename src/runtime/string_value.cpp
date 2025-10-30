@@ -4,6 +4,9 @@
 #include "runtime/string_value.hpp"
 
 namespace Minuet::Runtime {
+    StringValue::StringValue()
+    : m_items {}, m_length {0} {}
+
     StringValue::StringValue(std::string s) noexcept
     : m_items {}, m_length {0} {
         for (const auto c : s) {
@@ -78,6 +81,10 @@ namespace Minuet::Runtime {
 
     auto StringValue::items() noexcept -> std::vector<FastValue>& {
         return m_items;
+    }
+
+    auto StringValue::clone() -> std::unique_ptr<HeapValueBase> {
+        return std::make_unique<StringValue>(to_string());
     }
 
     auto StringValue::as_fast_value() noexcept -> FastValue {
