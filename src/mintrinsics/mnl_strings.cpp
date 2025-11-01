@@ -1,5 +1,3 @@
-#include <sstream>
-
 #include "mintrinsics/mnl_strings.hpp"
 #include "runtime/string_value.hpp"
 
@@ -57,14 +55,9 @@ namespace Minuet::Intrinsics {
             return false;
         }
 
-        const auto& source_items = source_arg_p->items();
-        std::ostringstream sout;
-
-        for (auto copy_pos = slice_begin; copy_pos < slice_end; ++copy_pos) {
-            sout << static_cast<char>(source_items[copy_pos].to_scalar().value_or(' ') & 0x7f);
-        }
-
-        if (auto& result_obj_p = vm.handle_native_fn_access_heap().try_create_value<Runtime::StringValue>(sout.str()); result_obj_p) {
+        if (auto& result_obj_p = vm.handle_native_fn_access_heap().try_create_value<Runtime::StringValue>(
+            source_arg_p->to_string().substr(slice_begin, slice_len)
+        ); result_obj_p) {
             vm.handle_native_fn_return(
                 Runtime::FastValue {
                     result_obj_p.get(),
