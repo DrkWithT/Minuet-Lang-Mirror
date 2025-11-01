@@ -1,0 +1,5 @@
+# string manipulation #
+
+native fun strlen: [src]
+native fun strcat: [dest, src]
+native fun substr: [src, begin, len]

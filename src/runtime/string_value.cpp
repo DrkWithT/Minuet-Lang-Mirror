@@ -87,6 +87,10 @@ namespace Minuet::Runtime {
         return m_items;
     }
 
+    auto StringValue::items() const noexcept -> const std::vector<FastValue>& {
+        return m_items;
+    }
+
     auto StringValue::clone() -> std::unique_ptr<HeapValueBase> {
         return std::make_unique<StringValue>(to_string());
     }
@@ -103,5 +107,21 @@ namespace Minuet::Runtime {
         }
 
         return sout.str();
+    }
+
+    auto StringValue::operator==(const HeapValueBase& rhs) const noexcept -> bool {
+        const auto self_len = get_size();
+        
+        if (get_tag() != rhs.get_tag() || self_len != rhs.get_size()) {
+            return false;
+        }
+
+        for (auto item_idx = 0; item_idx < self_len; ++item_idx) {
+            if (const auto& rhs_item = rhs.items()[item_idx]; m_items[item_idx] != rhs_item) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -11,6 +11,10 @@ namespace Minuet::Runtime {
         return m_items;
     }
 
+    auto SequenceValue::items() const noexcept -> const std::vector<FastValue>& {
+        return m_items;
+    }
+
 
     auto SequenceValue::get_memory_score() const& noexcept -> std::size_t {
         return m_length * cm_fast_val_memsize;
@@ -109,5 +113,21 @@ namespace Minuet::Runtime {
         sout << delim_close;
 
         return sout.str();
+    }
+
+    [[nodiscard]] auto SequenceValue::operator==(const HeapValueBase& rhs) const noexcept -> bool {
+        const auto self_size = get_size();
+
+        if (get_tag() != rhs.get_tag() || self_size != rhs.get_size()) {
+            return false;
+        }
+
+        for (auto item_idx = 0; item_idx < self_size; ++item_idx) {
+            if (const auto& rhs_item = rhs.items()[item_idx]; m_items[item_idx] != rhs_item) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

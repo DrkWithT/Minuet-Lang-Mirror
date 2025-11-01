@@ -365,8 +365,15 @@ namespace Minuet::Runtime {
             return m_data.dbl_v == arg.m_data.dbl_v;
         case FVTag::val_ref:
             return m_data.fv_p->operator==(arg);
-        // case FVTag::sequence:
-        // break;
+        case FVTag::sequence:
+        case FVTag::string:
+            {
+                if (const HeapValueBase* self_obj_p = m_data.obj_p; self_obj_p) {
+                    if (const HeapValueBase* rhs_obj_p = arg.m_data.obj_p; rhs_obj_p) {
+                        return self_obj_p->operator==(*rhs_obj_p);
+                    }
+                }
+            }
         default:
             break;
         }

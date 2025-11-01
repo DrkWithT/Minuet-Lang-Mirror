@@ -24,10 +24,13 @@ namespace Minuet::Runtime {
 
         void freeze() noexcept override;
         auto items() noexcept -> std::vector<FastValue>& override;
+        auto items() const noexcept -> const std::vector<FastValue>& override;
         auto clone() -> std::unique_ptr<HeapValueBase> override;
 
         auto as_fast_value() noexcept -> FastValue override;
         auto to_string() const& noexcept -> std::string override;
+
+        [[nodiscard]] auto operator==(const HeapValueBase& rhs) const noexcept -> bool override;
 
     private:
         static constexpr auto cm_fast_val_memsize = 16UL;

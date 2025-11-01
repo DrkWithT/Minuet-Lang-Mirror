@@ -23,6 +23,7 @@ namespace Minuet::Runtime {
         SequenceValue();
 
         [[nodiscard]] auto items() noexcept -> std::vector<FastValue>& override;
+        auto items() const noexcept -> const std::vector<FastValue>& override;
 
         [[nodiscard]] auto get_memory_score() const& noexcept -> std::size_t override;
         [[nodiscard]] auto get_tag() const& noexcept -> ObjectTag override;
@@ -39,6 +40,8 @@ namespace Minuet::Runtime {
 
         [[nodiscard]] auto as_fast_value() noexcept -> FastValue override;
         [[nodiscard]] auto to_string() const& noexcept -> std::string override;
+
+        [[nodiscard]] auto operator==(const HeapValueBase& rhs) const noexcept -> bool override;
     };
 }
 
