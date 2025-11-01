@@ -44,6 +44,8 @@ namespace Minuet::Runtime::VM {
 
         [[nodiscard]] auto operator()() -> Utils::ExecStatus;
 
+        [[nodiscard]] auto handle_native_fn_access_heap() noexcept -> HeapStorage&;
+
         [[nodiscard]] auto handle_native_fn_access(int16_t arg_count, int16_t offset) & noexcept -> Runtime::FastValue&;
 
         void handle_native_fn_return(Runtime::FastValue&& result, [[maybe_unused]] int16_t arg_count) noexcept;

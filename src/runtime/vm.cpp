@@ -163,6 +163,10 @@ namespace Minuet::Runtime::VM {
         return (m_memory[0] == FastValue {0}) ? Utils::ExecStatus::ok : Utils::ExecStatus::user_error;
     }
 
+    auto Engine::handle_native_fn_access_heap() noexcept -> HeapStorage& {
+        return m_heap;
+    }
+
     auto Engine::handle_native_fn_access(int16_t arg_count, int16_t offset) & noexcept -> Runtime::FastValue& {
         const auto native_call_base_slot = m_rft - arg_count + 1;
 
