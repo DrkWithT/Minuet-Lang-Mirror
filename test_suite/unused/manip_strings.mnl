@@ -1,0 +1,16 @@
+import "./stdlib/strings.mnl"
+import "./stdlib/stdio.mnl"
+
+fun main: [] => {
+    def msg = "Hello World"
+    def foo = "abc"
+    def bar = "123"
+
+    def foobar = strcat(foo, bar)
+    print(foobar)
+
+    def pre_msg = substr(msg, 0, 5)
+    print(pre_msg)
+
+    return 0
+}
