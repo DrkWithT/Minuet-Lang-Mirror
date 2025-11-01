@@ -1,5 +1,5 @@
 # string manipulation #
 
-native fun str_len_of: [src]
-native fun str_concat: [dest, src]
-native fun str_slice: [src, begin, len]
+native fun strlen: [src]
+native fun strcat: [dest, src]
+native fun substr: [src, begin, len]
