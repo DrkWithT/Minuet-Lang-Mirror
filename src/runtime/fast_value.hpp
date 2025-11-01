@@ -39,10 +39,13 @@ namespace Minuet::Runtime {
 
         virtual void freeze() noexcept = 0;
         virtual auto items() noexcept -> std::vector<FastValue>& = 0;
+        virtual auto items() const noexcept -> const std::vector<FastValue>& = 0;
         virtual auto clone() -> std::unique_ptr<HeapValueBase> = 0;
 
         virtual auto as_fast_value() noexcept -> FastValue = 0;
         virtual auto to_string() const& noexcept -> std::string = 0;
+
+        virtual auto operator==(const HeapValueBase& rhs) const noexcept -> bool = 0;
     };
 
     /// NOTE: Convenience alias of a type-erased pointer to `HeapValueBase`.
