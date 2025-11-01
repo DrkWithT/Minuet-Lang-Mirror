@@ -3,6 +3,7 @@
 
 #include "mintrinsics/mnl_stdio.hpp"
 #include "mintrinsics/mnl_lists.hpp"
+#include "mintrinsics/mnl_strings.hpp"
 #include "driver/driver.hpp"
 #include "driver/plugins/disassembler.hpp"
 #include "driver/plugins/ir_dumper.hpp"
@@ -87,6 +88,10 @@ int main(int argc, char* argv[]) {
     app.register_native_proc({"list_pop_back", Intrinsics::native_list_pop_back});
     app.register_native_proc({"list_pop_front", Intrinsics::native_list_pop_front});
     app.register_native_proc({"list_concat", Intrinsics::native_list_concat});
+
+    app.register_native_proc({"strlen", Intrinsics::native_strlen});
+    app.register_native_proc({"strcat", Intrinsics::native_strcat});
+    app.register_native_proc({"substr", Intrinsics::native_substr});
 
     return app(arg_2) ? 0 : 1 ;
 }
