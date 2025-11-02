@@ -4,13 +4,14 @@
 #include "mintrinsics/mnl_stdio.hpp"
 #include "mintrinsics/mnl_lists.hpp"
 #include "mintrinsics/mnl_strings.hpp"
+#include "mintrinsics/mnl_utils.hpp"
 #include "driver/driver.hpp"
 #include "driver/plugins/disassembler.hpp"
 #include "driver/plugins/ir_dumper.hpp"
 
 constexpr auto minuet_version_major = 0;
 constexpr auto minuet_version_minor = 7;
-constexpr auto minuet_version_patch = 1;
+constexpr auto minuet_version_patch = 2;
 
 
 using namespace Minuet;
@@ -79,19 +80,27 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // stdlib standard I/O
     app.register_native_proc({"print", Intrinsics::native_print_value});
     app.register_native_proc({"prompt_int", Intrinsics::native_prompt_int});
     app.register_native_proc({"prompt_float", Intrinsics::native_prompt_float});
+    app.register_native_proc({"readln", Intrinsics::native_readln});
 
+    // stdlib lists
     app.register_native_proc({"len_of", Intrinsics::native_len_of});
     app.register_native_proc({"list_push_back", Intrinsics::native_list_push_back});
     app.register_native_proc({"list_pop_back", Intrinsics::native_list_pop_back});
     app.register_native_proc({"list_pop_front", Intrinsics::native_list_pop_front});
     app.register_native_proc({"list_concat", Intrinsics::native_list_concat});
 
+    // stdlib strings
     app.register_native_proc({"strlen", Intrinsics::native_strlen});
     app.register_native_proc({"strcat", Intrinsics::native_strcat});
     app.register_native_proc({"substr", Intrinsics::native_substr});
+
+    // stdlib utils
+    app.register_native_proc({"stoi", Intrinsics::native_stoi});
+    app.register_native_proc({"stof", Intrinsics::native_stof});
 
     return app(arg_2) ? 0 : 1 ;
 }

@@ -10,7 +10,7 @@ _Minuet_ is a small, Python & C inspired language for simple programs. Unlike sh
     - First class functions
     - Higher order functions & some closures?
  - Built-in data structures
-    - Lists (a rope-like hybrid of `Value` vectors in nodes)
+    - Lists
     - Tuples
  - Built-in helper functions
  - Requires a `main` function
