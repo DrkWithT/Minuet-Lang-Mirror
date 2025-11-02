@@ -3,7 +3,8 @@
 import "./stdlib/stdio.mnl"
 
 fun main: [] => {
-    def your_msg = readln()
+    def your_msg = 0
+    your_msg = readln()
 
     print(your_msg)
 
