@@ -5,9 +5,5 @@ fun main: [] => {
 
     print(msg)
 
-    def w = msg.6
-
-    print(w)
-
     return 0
 }

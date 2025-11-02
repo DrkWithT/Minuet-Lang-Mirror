@@ -1,0 +1,11 @@
+# test readln from stdio #
+
+import "./stdlib/stdio.mnl"
+
+fun main: [] => {
+    def your_msg = readln()
+
+    print(your_msg)
+
+    return 0
+}
