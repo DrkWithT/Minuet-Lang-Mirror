@@ -1,5 +1,6 @@
-# stdio - console I/O #
+# console I/O #
 
 native fun print: [arg]
 native fun prompt_int: []
 native fun prompt_float: []
+native fun readln: []
