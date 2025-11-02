@@ -1,0 +1,4 @@
+# native utility functions #
+
+native fun stoi: [str]
+native fun stof: [str]

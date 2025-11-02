@@ -498,11 +498,13 @@ namespace Minuet::IR::Convert {
         auto var_init_aa = var_init_opt.value();
         auto var_dest_aa = var_dest_opt.value();
 
-        m_result_cfgs.back().get_newest_bb().value()->steps.emplace_back(TACUnary {
-            .dest = var_dest_aa,
-            .arg_0 = var_init_aa,
-            .op = Op::nop,
-        });
+        if (var_dest_aa != var_init_aa) {
+            m_result_cfgs.back().get_newest_bb().value()->steps.emplace_back(TACUnary {
+                .dest = var_dest_aa,
+                .arg_0 = var_init_aa,
+                .op = Op::nop,
+            });
+        }
 
         if (!record_name_aa(NameLocation::local_slot, var_name, var_dest_aa)) {
             const auto def_src_beg = def.name.start;

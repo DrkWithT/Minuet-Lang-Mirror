@@ -9,6 +9,8 @@ namespace Minuet::Intrinsics {
     [[nodiscard]] auto native_prompt_int(Runtime::VM::Engine& vm, int16_t argc) -> bool;
 
     [[nodiscard]] auto native_prompt_float(Runtime::VM::Engine& vm, int16_t argc) -> bool;
+
+    [[nodiscard]] auto native_readln(Runtime::VM::Engine& vm, int16_t argc) -> bool;
 }
 
 #endif
