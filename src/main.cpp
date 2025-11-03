@@ -1,5 +1,7 @@
 #include <iostream>
 #include <print>
+#include <string>
+#include <vector>
 
 #include "mintrinsics/mnl_stdio.hpp"
 #include "mintrinsics/mnl_lists.hpp"
@@ -10,9 +12,9 @@
 #include "driver/plugins/ir_dumper.hpp"
 
 constexpr auto minuet_version_major = 0;
-constexpr auto minuet_version_minor = 7;
-constexpr auto minuet_version_patch = 2;
-
+constexpr auto minuet_version_minor = 8;
+constexpr auto minuet_version_patch = 0;
+constexpr auto minuet_run_argv_offset = 3;
 
 using namespace Minuet;
 
@@ -52,6 +54,22 @@ public:
         return interpreter_driver;
     }
 };
+
+/**
+ * @brief Stringifies the native main function's `argv` strings from argument 3 and after, stopping at the terminating `nullptr`. The resulting `std::vector<std::string>` will then be injected into the interpreter via builder.
+ * 
+ * @param argv Pointer to `argv[3]` for `int main()`.
+ * @return std::vector<std::string> 
+ */
+[[nodiscard]] auto consume_running_args(char* argv[], int full_argc) -> std::vector<std::string> {
+    std::vector<std::string> program_args;
+
+    for (auto arg_pos = minuet_run_argv_offset; arg_pos < full_argc; ++arg_pos) {
+        program_args.emplace_back(argv[arg_pos]);
+    }
+
+    return program_args;
+}
 
 int main(int argc, char* argv[]) {
     if (argc <= 1) {
@@ -101,6 +119,7 @@ int main(int argc, char* argv[]) {
     // stdlib utils
     app.register_native_proc({"stoi", Intrinsics::native_stoi});
     app.register_native_proc({"stof", Intrinsics::native_stof});
+    app.register_native_proc({"get_argv", Intrinsics::native_get_argv});
 
-    return app(arg_2) ? 0 : 1 ;
+    return app(arg_2, consume_running_args(argv, argc)) ? 0 : 1 ;
 }

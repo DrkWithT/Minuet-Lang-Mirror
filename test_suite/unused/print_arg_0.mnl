@@ -1,0 +1,12 @@
+import "./stdlib/stdio.mnl"
+import "./stdlib/utils.mnl"
+
+fun main: [] => {
+    def args_ref = 0
+    def first_arg = args_ref.0
+
+    args_ref = get_argv()
+    print(first_arg)
+
+    return 0
+}

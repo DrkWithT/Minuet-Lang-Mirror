@@ -2,3 +2,4 @@
 
 native fun stoi: [str]
 native fun stof: [str]
+native fun get_argv: []
