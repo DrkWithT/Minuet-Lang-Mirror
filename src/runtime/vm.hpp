@@ -40,9 +40,11 @@ namespace Minuet::Runtime::VM {
 
     class Engine {
     public:
-        Engine(Utils::EngineConfig config, Code::Program& prgm, std::any native_fn_table);
+        Engine(Utils::EngineConfig config, Code::Program& prgm, std::any native_fn_table, std::vector<std::string> program_args);
 
         [[nodiscard]] auto operator()() -> Utils::ExecStatus;
+
+        [[nodiscard]] auto handle_native_fn_access_argv() noexcept -> HeapValuePtr;
 
         [[nodiscard]] auto handle_native_fn_access_heap() noexcept -> HeapStorage&;
 
@@ -92,6 +94,8 @@ namespace Minuet::Runtime::VM {
         HeapStorage m_heap;
         std::vector<Runtime::FastValue> m_memory;
         std::vector<Utils::CallFrame> m_call_frames;
+
+        HeapValuePtr m_program_argv_p;
 
         const Code::Chunk* m_chunk_view;
         const FastValue* m_const_view;

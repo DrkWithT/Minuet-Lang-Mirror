@@ -7,6 +7,8 @@ namespace Minuet::Intrinsics {
     [[nodiscard]] auto native_stoi(Runtime::VM::Engine& vm, int16_t argc) -> bool;
 
     [[nodiscard]] auto native_stof(Runtime::VM::Engine& vm, int16_t argc) -> bool;
+
+    [[nodiscard]] auto native_get_argv(Runtime::VM::Engine& vm, int16_t argc) -> bool;
 }
 
 #endif

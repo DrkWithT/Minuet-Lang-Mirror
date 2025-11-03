@@ -57,4 +57,16 @@ namespace Minuet::Intrinsics {
 
         return false;
     }
+
+    /// TODO: Fix a possible bug of the arguments sequence being garbage collected early if its reference prematurely becomes unreachable. One possible solution could be to rewrite the heap to contain the argv separately from the usual object pool. Then `fun main: [argv]` would have the arguments reference implicitly passed.
+    auto native_get_argv(Runtime::VM::Engine& vm, int16_t argc) -> bool {
+        auto argv_list_ptr = vm.handle_native_fn_access_argv();
+
+        vm.handle_native_fn_return(Runtime::FastValue {
+            argv_list_ptr,
+            Runtime::FVTag::sequence,
+        }, argc);
+
+        return true;
+    }
 }

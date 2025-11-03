@@ -166,7 +166,7 @@ namespace Minuet::Driver {
         m_disassembler = std::make_unique<Disassembler>(bc_printer);
     }
 
-    auto Driver::operator()(const std::filesystem::path& entry_source_path) -> bool {
+    auto Driver::operator()(const std::filesystem::path& entry_source_path, std::vector<std::string> program_args) -> bool {
         auto parsed_program = parse_sources(entry_source_path);
 
         if (!parsed_program) {
@@ -205,7 +205,7 @@ namespace Minuet::Driver {
             return true;
         }
 
-        Runtime::VM::Engine vm {normal_vm_config, program, &m_native_procs};
+        Runtime::VM::Engine vm {normal_vm_config, program, &m_native_procs, std::move(program_args)};
 
         auto run_start = std::chrono::steady_clock::now();
         const auto exec_status = vm();
