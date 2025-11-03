@@ -189,17 +189,21 @@ namespace Minuet::Runtime::VM {
     }
 
     auto Engine::handle_native_fn_access(int16_t arg_count, int16_t offset) & noexcept -> Runtime::FastValue& {
-        const auto native_call_base_slot = m_rft - arg_count + 1;
-
-        return m_memory[native_call_base_slot + offset];
+        if (const auto native_call_base_slot = m_rft - arg_count; arg_count > 0) {
+            return m_memory[native_call_base_slot + offset + 1];
+        } else {
+            return m_memory[native_call_base_slot + offset];
+        }
     }
 
-    void Engine::handle_native_fn_return(Runtime::FastValue&& result, [[maybe_unused]] int16_t arg_count) noexcept {
-        const auto native_call_base_slot = m_rft - arg_count + 1;
-
-        m_memory[native_call_base_slot] = std::move(result);
+    void Engine::handle_native_fn_return(Runtime::FastValue&& result, int16_t arg_count) noexcept {
+        if (const auto native_call_result_slot = m_rft - arg_count; arg_count > 0) {
+            m_memory[native_call_result_slot + 1] = std::move(result);
+        } else {
+            m_memory[native_call_result_slot] = std::move(result);
+            ++m_rft;
+        }
     }
-
 
     /**
      * @brief Implements the bulk of garbage collection. Specifically, the logic will base itself on craftinginterpreters.com: the GC will stop-the-world for each collection if the heap has a certain "overhead score" given by

@@ -3,11 +3,8 @@
 import "./stdlib/stdio.mnl"
 
 fun main: [] => {
-    def x = 0
-    def y = 0.0
-    
-    x = prompt_int()
-    y = prompt_float()
+    def x = prompt_int()
+    def y = prompt_float()
 
     print(x)
     print(y)
