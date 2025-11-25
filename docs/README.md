@@ -1,7 +1,7 @@
 # README
 
 ### Brief
-_Minuet_ is a small, Python & C inspired language for simple programs. Unlike shell scripting dialects across systems, this language aims to look and behave nicer for the programmer.
+_Minuet_ is a small language for simple utility programs. Unlike shell scripting dialects across systems, this language aims to look and behave nicer for the programmer.
 
 ### Design Principles
  - Concise and semi-familiar syntax
@@ -16,17 +16,23 @@ _Minuet_ is a small, Python & C inspired language for simple programs. Unlike sh
  - Requires a `main` function
 
 ### Other Documentation
- - [Usage](./docs/usage.md)
+ - [Usage](/docs/usage.md)
  - [Grammar](/docs/grammar.md)
  - [VM](/docs/vm.md)
 
 ### Roadmap
- - `0.8.1`: Add file I/O support:
-   - Add `open_file(path)` intrinsic, yielding an `fd`
-   - Add `append_to_file(fd, mode, value)` intrinsic (auto-formatted writes)
-   - Add `close_file(fd)` intrinsic
- - `0.9.0`: Add capturing lambdas.
- - `0.10.0`: Add simple structures.
+ - `0.9.0`: Add simple classes.
+   - Add syntax support.
+       - `class` declaration with `self` passing methods & members.
+       - Private access by default _but_ `pub` allows public access.
+       - Special `create()` and `cleanup()` methods.
+   - Add semantic checks for classes.
+       - Check access specifiers & method calls.
+   - Add IR gen support for class types.
+       - Each method is de-sugared to a function taking its instance by reference.
+   - Add support for class-instance heap objects.
+ - `0.10.0`: Add simple lambdas as 1st-class objects.
+   - Add `fun [] uses [...] {}` syntax.
  - `0.11.0`: Add simple x64 JIT for pure, global functions taking integers.
    - Uses the `AsmJIT` framework.
    - Prototype JIT compiler using CFG IR, regalloc, etc.
