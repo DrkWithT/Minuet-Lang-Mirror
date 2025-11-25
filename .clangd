@@ -1,9 +1,0 @@
-If:
-    PathMatch: [.*\.hpp, .*\.cpp]
-
-CompileFlags:
-    Add: [-xc++, -std=c++2b, -Wall, -Wextra, -Wepedantic, -Werror, -I/Users/derektan/Projects/CPP_Projects_2/Minuet-Lang]
-    Compiler: clang++
-
-Completion:
-    AllScopes: Yes
