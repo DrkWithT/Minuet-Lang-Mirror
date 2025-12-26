@@ -1,8 +1,8 @@
 {
     "version": 8,
     "cmakeMinimumRequired": {
-        "major": 3,
-        "minor": 30
+        "major": 4,
+        "minor": 2
     },
     "configurePresets": [
         {
@@ -12,7 +12,11 @@
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "CMAKE_CXX_STANDARD": "23",
                 "CMAKE_CXX_EXTENSIONS": "OFF",
-                "MY_FLAGS": "-Wall;-Wextra;-Wpedantic;-Werror;-g;-O0"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_COMPILE_WARNING_AS_ERROR": "ON",
+                "MINUET_LANG_SRC_DIR": "${sourceDir}/src/",
+                "LLVM_LIBRARY_DIR": "/usr/local/opt/llvm/lib/",
+                "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/build/"
             }
         },
         {
@@ -22,7 +26,11 @@
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "CMAKE_CXX_STANDARD": "23",
                 "CMAKE_CXX_EXTENSIONS": "OFF",
-                "MY_FLAGS": "-Wall;-Wextra;-Wpedantic;-Werror;-O3"
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_COMPILE_WARNING_AS_ERROR": "ON",
+                "MINUET_LANG_SRC_DIR": "${sourceDir}/src/",
+                "LLVM_LIBRARY_DIR": "/usr/local/opt/llvm/lib/",
+                "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/build/"
             }
         },
         {

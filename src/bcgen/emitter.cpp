@@ -37,9 +37,9 @@ namespace Minuet::Codegen {
         }
 
         return Program {
-            .chunks = std::move(m_result_chunks),
             .constants = std::move(ir.constants),
             .pre_objects = std::move(ir_objects),
+            .chunks = std::move(m_result_chunks),
             .entry_id = ir.main_id,
         };
     }

@@ -254,8 +254,8 @@ namespace Minuet::Frontend::Parsing {
 
         return std::make_unique<Expr>(Expr {
             .data = Syntax::Exprs::Call {
-                .callee = std::move(lhs_expr),
                 .args = std::move(args),
+                .callee = std::move(lhs_expr),
             },
             .src_begin = expr_begin,
             .src_end = expr_end,
