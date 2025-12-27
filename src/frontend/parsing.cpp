@@ -511,12 +511,12 @@ namespace Minuet::Frontend::Parsing {
         consume(lexer, src, TokenType::close_bracket);
         consume(lexer, src, TokenType::oper_assign);
 
-        auto tuple_literal_expr = parse_sequence(lexer, src);
+        auto rhs_expr = parse_compare(lexer, src);
 
         return std::make_unique<Stmt>(Stmt {
             .data = Syntax::Stmts::DetupDef {
                 .names = std::move(name_tokens),
-                .tuple_expr = std::move(tuple_literal_expr)
+                .tuple_expr = std::move(rhs_expr)
             },
             .src_begin = stmt_begin,
             .src_end = m_current.start

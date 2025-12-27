@@ -25,7 +25,7 @@ namespace Minuet::Semantics {
     }
 
     void Analyzer::report_error(int line, const std::string& msg) {
-        std::println(std::cerr, "\033[1;31mSemantic Error\033[0m [In scope '{}', ln {}]: {}",  m_scopes.back().name, line, msg);
+        std::println(std::cerr, "\033[1;31mSemantic Error\033[0m [In scope '{}', ln {}]:\n\tnote: {}\n",  m_scopes.back().name, line, msg);
     }
 
     void Analyzer::report_error(const Frontend::Lexicals::Token& culprit, const std::string& msg, const std::string& source) {
@@ -356,6 +356,37 @@ namespace Minuet::Semantics {
         return true;
     }
 
+    auto Analyzer::check_detup_def(const Syntax::Stmts::DetupDef& stmt, const std::string& source) noexcept -> bool {
+        const auto detup_name_count = stmt.names.size();
+        const auto detup_line_n = stmt.names.back().line;
+
+        // 1. Check each LHS name within the destructure statement: no re-declarations are allowed in scope.
+        for (const auto& name_token : stmt.names) {
+            if (std::string name = source.substr(name_token.start, token_length(name_token)); lookup_named_item(name).has_value()) {
+                report_error(detup_line_n, std::format("Cannot redeclare variable name '{}' at this destructure statement.", name));
+                return false;
+            }
+        }
+
+        // 2. Check RHS: it must be a tuple sequence type with matching length to the LHS name count.
+        if (!std::holds_alternative<Syntax::Exprs::Sequence>(stmt.tuple_expr->data)) {
+            report_error(detup_line_n, "Invalid RHS of destructure, found a non-sequence value.");
+            return false;
+        } else if (const auto& maybe_tuple = std::get<Syntax::Exprs::Sequence>(stmt.tuple_expr->data); !maybe_tuple.is_tuple) {
+            report_error(detup_line_n, "Invalid RHS of destructure, found a non-tuple sequence value. List sizes cannot be verified at compile-time.");
+            return false;
+        } else if (const auto rhs_tuple_len = maybe_tuple.items.size(); rhs_tuple_len != detup_name_count) {
+            report_error(detup_line_n, std::format("Mismatch of name count to tuple: expected {} versus {} items.", rhs_tuple_len, detup_name_count));
+            return false;
+        }
+
+        if (!check_expr(stmt.tuple_expr, source)) {
+            return false;
+        }
+
+        return true;
+    }
+
     auto Analyzer::check_if(const Syntax::Stmts::If& stmt, const std::string& source) noexcept -> bool {
         if (!check_expr(stmt.cond_expr, source)) {
             return false;
@@ -478,6 +509,8 @@ namespace Minuet::Semantics {
             return check_expr_stmt(*expr_stmt_p, source);
         } else if (auto local_def_p = std::get_if<Syntax::Stmts::LocalDef>(&stmt_p->data); local_def_p) {
             return check_local_def(*local_def_p, source);
+        } else if (auto detup_def_p = std::get_if<Syntax::Stmts::DetupDef>(&stmt_p->data); detup_def_p) {
+            return check_detup_def(*detup_def_p, source);
         } else if (auto if_stmt_p = std::get_if<Syntax::Stmts::If>(&stmt_p->data); if_stmt_p) {
             return check_if(*if_stmt_p, source);
         } else if (auto ret_stmt_p = std::get_if<Syntax::Stmts::Return>(&stmt_p->data); ret_stmt_p) {
