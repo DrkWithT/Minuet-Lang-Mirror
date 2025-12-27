@@ -40,6 +40,7 @@ namespace Minuet::Driver {
         m_lexer.add_lexical_item({.text = "fun", .tag = TokenType::keyword_fun});
         m_lexer.add_lexical_item({.text = "native", .tag = TokenType::keyword_native});
         m_lexer.add_lexical_item({.text = "def", .tag = TokenType::keyword_def});
+        m_lexer.add_lexical_item({.text = "detup", .tag = TokenType::keyword_detup});
         m_lexer.add_lexical_item({.text = "if", .tag = TokenType::keyword_if});
         m_lexer.add_lexical_item({.text = "else", .tag = TokenType::keyword_else});
         m_lexer.add_lexical_item({.text = "match", .tag = TokenType::keyword_match});

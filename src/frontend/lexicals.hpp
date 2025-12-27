@@ -14,6 +14,7 @@ namespace Minuet::Frontend::Lexicals {
         keyword_fun,
         keyword_native,
         keyword_def,
+        keyword_detup,
         keyword_if,
         keyword_else,
         keyword_match,
