@@ -29,7 +29,7 @@
 <native> = "native" "fun" <identifier> ":" "[" <identifier> ("," <identifier>)* "]"
 <block> = "{" (<definition> | <destructure> | <if> | <return> | <while> | <expr-stmt>)+ "}"
 <definition> = "def" <identifier> "=" <compare> <terminator>
-<destructure> = "detup" "[" <identifier> ("," <identifier>)* "]" "=" <tuple> <terminator>
+<destructure> = "detup" "[" <identifier> ("," <identifier>)* "]" "=" <compare> <terminator>
 <if> = "if" <compare> <block> ("else" <block>)?
 <return> = "return" <compare>
 <while> = "while" <compare> <block>
