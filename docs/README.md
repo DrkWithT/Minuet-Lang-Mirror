@@ -21,19 +21,10 @@ _Minuet_ is a small language for simple utility programs. Unlike shell scripting
  - [VM](/docs/vm.md)
 
 ### Roadmap
- - `0.9.0`: Add simple classes.
-   - Add syntax support.
-       - `class` declaration with `self` passing methods & members.
-       - Private access by default _but_ `pub` allows public access.
-       - Special `create()` and `cleanup()` methods.
-   - Add semantic checks for classes.
-       - Check access specifiers & method calls.
-   - Add IR gen support for class types.
-       - Each method is de-sugared to a function taking its instance by reference.
-   - Add support for class-instance heap objects.
- - `0.10.0`: Add simple lambdas as 1st-class objects.
+ - `0.10.0`: Add tuple destructuring?
+ - `0.11.0`: Add simple lambdas as 1st-class objects.
    - Add `fun [] uses [...] {}` syntax.
- - `0.11.0`: Add simple x64 JIT for pure, global functions taking integers.
+ - `0.12.0`: Add simple x64 JIT for pure, global functions taking integers.
    - Uses the `AsmJIT` framework.
    - Prototype JIT compiler using CFG IR, regalloc, etc.
    - Create a JIT compilation thread which runs in the background, adding a JIT version of a function when finished.

@@ -27,8 +27,9 @@
 <program> = (<import> | <function> | <native>)* EOF
 <function> = "fun" <identifier> ":" "[" <identifier> ("," <identifier>)* "]" "=>" <block>
 <native> = "native" "fun" <identifier> ":" "[" <identifier> ("," <identifier>)* "]"
-<block> = "{" (<definition> | <if> | <return> | <while> | <for-count-loop> | <expr-stmt>)+ "}"
+<block> = "{" (<definition> | <destructure> | <if> | <return> | <while> | <expr-stmt>)+ "}"
 <definition> = "def" <identifier> "=" <compare> <terminator>
+<destructure> = "detup" "[" <identifier> ("," <identifier>)* "]" "=" <tuple> <terminator>
 <if> = "if" <compare> <block> ("else" <block>)?
 <return> = "return" <compare>
 <while> = "while" <compare> <block>
@@ -37,7 +38,4 @@
 ```
 
 ### Unused
-```
-; only works on tuples!
-<decomp> = "def" "[" <identifier> ("," <identifier>)* "]" "=" <identifier>
-```
+N/A
