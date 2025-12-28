@@ -15,7 +15,7 @@ build_status=0
 if [[ $action = "help" ]]; then
     usage_exit 0;
 elif [[ $action = "rebuild" && $argc -ge 2 ]]; then
-    rm -f ./build/;
+    rm -rf ./build/;
     cmake --fresh -S . -B build --preset "local-$2-build" && cmake --build build;
 elif [[ $action = "build" && $argc -ge 2 ]]; then
     rm -f ./compile_commands.json;
