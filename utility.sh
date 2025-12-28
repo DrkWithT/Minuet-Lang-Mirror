@@ -2,6 +2,7 @@ argc=$#
 
 usage_exit() {
     echo "Usage: utility.sh [help | (re)build | unittest | run]\n\tutility.sh (re)build <preset>\n\tutility.sh unittest\n\tutility.sh run <args>\n\tprofile <minuet-lang-file>";
+    echo "Preset Keywords:\n\tdebug\n\trelease\n\tany-debug (for non-LLVM-Clang)\n\tany-release (for non-LLVM-Clang)";
     exit $1;
 }
 

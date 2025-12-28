@@ -6,6 +6,30 @@
     },
     "configurePresets": [
         {
+            "name": "local-any-debug-build",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_CXX_STANDARD": "23",
+                "CMAKE_CXX_EXTENSIONS": "OFF",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_COMPILE_WARNING_AS_ERROR": "ON",
+                "MINUET_LANG_SRC_DIR": "${sourceDir}/src/",
+                "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/build/"
+            }
+        },
+        {
+            "name": "local-any-release-build",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_CXX_STANDARD": "23",
+                "CMAKE_CXX_EXTENSIONS": "OFF",
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_COMPILE_WARNING_AS_ERROR": "ON",
+                "MINUET_LANG_SRC_DIR": "${sourceDir}/src/",
+                "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/build/"
+            }
+        },
+        {
             "name": "local-debug-build",
             "generator": "Ninja",
             "cacheVariables": {
