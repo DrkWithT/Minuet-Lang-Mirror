@@ -15,8 +15,8 @@ namespace Minuet::Runtime::VM {
 
     static constexpr auto ok_res_value = static_cast<int>(Utils::ExecStatus::ok);
 
-    Engine::Engine(Utils::EngineConfig config, Code::Program& prgm, std::any native_fn_table_wrap)
-    : m_heap (std::exchange(prgm.pre_objects, {})), m_memory {}, m_call_frames {}, m_chunk_view {}, m_const_view {}, m_call_frame_ptr {nullptr}, m_native_funcs {}, m_rfi {}, m_rip {}, m_rbp {}, m_rft {}, m_rsp {}, m_consts_n {}, m_rrd {}, m_res {} {
+    Engine::Engine(Utils::EngineConfig config, Code::Program& prgm, std::any native_fn_table_wrap, std::vector<std::string> program_args)
+    : m_heap (std::exchange(prgm.pre_objects, {})), m_memory {}, m_call_frames {}, m_program_argv_p {nullptr}, m_chunk_view {}, m_const_view {}, m_call_frame_ptr {nullptr}, m_native_funcs {}, m_rfi {}, m_rip {}, m_rbp {}, m_rft {}, m_rsp {}, m_consts_n {}, m_rrd {}, m_res {} {
         const auto [mem_limit, recur_depth_max] = config;
         const auto prgm_entry_fn_id = prgm.entry_id.value_or(-1);
 
@@ -27,6 +27,23 @@ namespace Minuet::Runtime::VM {
         m_call_frames.reserve(recur_depth_max);
         m_call_frames.resize(recur_depth_max);
 
+        /* 2. Initialize crucial pointers for fast access of bytecode, constants, etc. */
+
+        /// 2a. Load process arguments specifically for the interpreter's current program.
+        if (auto temp_argv_p = m_heap.try_create_value<SequenceValue>().get(); temp_argv_p) {
+            for (auto& arg_string : program_args) {
+                if (auto temp_arg_p = m_heap.try_create_value<StringValue>(std::move(arg_string)).get(); temp_arg_p) {
+                    temp_argv_p->push_value(FastValue {
+                        temp_arg_p,
+                        FVTag::string,
+                    });
+                }
+            }
+
+            m_program_argv_p = temp_argv_p;
+        }
+
+        // 2b. Set quick access pointers to bytecode chunks and constants besides native stdlib functions.
         m_chunk_view = prgm.chunks.data();
         m_const_view = prgm.constants.data();
         m_call_frame_ptr = m_call_frames.data();
@@ -163,22 +180,30 @@ namespace Minuet::Runtime::VM {
         return (m_memory[0] == FastValue {0}) ? Utils::ExecStatus::ok : Utils::ExecStatus::user_error;
     }
 
+    auto Engine::handle_native_fn_access_argv() noexcept -> HeapValuePtr {
+        return m_program_argv_p;
+    }
+
     auto Engine::handle_native_fn_access_heap() noexcept -> HeapStorage& {
         return m_heap;
     }
 
     auto Engine::handle_native_fn_access(int16_t arg_count, int16_t offset) & noexcept -> Runtime::FastValue& {
-        const auto native_call_base_slot = m_rft - arg_count + 1;
-
-        return m_memory[native_call_base_slot + offset];
+        if (const auto native_call_base_slot = m_rft - arg_count; arg_count > 0) {
+            return m_memory[native_call_base_slot + offset + 1];
+        } else {
+            return m_memory[native_call_base_slot + offset];
+        }
     }
 
-    void Engine::handle_native_fn_return(Runtime::FastValue&& result, [[maybe_unused]] int16_t arg_count) noexcept {
-        const auto native_call_base_slot = m_rft - arg_count + 1;
-
-        m_memory[native_call_base_slot] = std::move(result);
+    void Engine::handle_native_fn_return(Runtime::FastValue&& result, int16_t arg_count) noexcept {
+        if (const auto native_call_result_slot = m_rft - arg_count; arg_count > 0) {
+            m_memory[native_call_result_slot + 1] = std::move(result);
+        } else {
+            m_memory[native_call_result_slot] = std::move(result);
+            ++m_rft;
+        }
     }
-
 
     /**
      * @brief Implements the bulk of garbage collection. Specifically, the logic will base itself on craftinginterpreters.com: the GC will stop-the-world for each collection if the heap has a certain "overhead score" given by

@@ -79,6 +79,7 @@ namespace Minuet::Semantics {
 
         [[nodiscard]] auto check_expr_stmt(const Syntax::Stmts::ExprStmt& stmt, const std::string& source) noexcept -> bool;
         [[nodiscard]] auto check_local_def(const Syntax::Stmts::LocalDef& stmt, const std::string& source) noexcept -> bool;
+        [[nodiscard]] auto check_detup_def(const Syntax::Stmts::DetupDef& stmt, const std::string& source) noexcept -> bool;
         [[nodiscard]] auto check_if(const Syntax::Stmts::If& stmt, const std::string& source) noexcept -> bool;
         [[nodiscard]] auto check_return(const Syntax::Stmts::Return& stmt, const std::string& source) noexcept -> bool;
         [[nodiscard]] auto check_while(const Syntax::Stmts::While& stmt, const std::string& source) noexcept -> bool;

@@ -11,7 +11,13 @@ namespace Minuet::Syntax::Stmts {
     template <typename ... StmtTypes>
     struct StmtNode;
     struct ExprStmt;
+
+    /// NOTE: represents a single variable declaration
     struct LocalDef;
+
+    /// NOTE: represents a tuple destructure AKA de-tuplified definition of variables
+    struct DetupDef;
+
     struct If;
     // struct Match;
     // struct MatchCase;
@@ -23,7 +29,7 @@ namespace Minuet::Syntax::Stmts {
     struct NativeStub;
     struct Import;
 
-    using StmtPtr = std::unique_ptr<StmtNode<ExprStmt, LocalDef, If, Return, While, Break, Block, Function, NativeStub, Import>>;
+    using StmtPtr = std::unique_ptr<StmtNode<ExprStmt, LocalDef, DetupDef, If, Return, While, Break, Block, Function, NativeStub, Import>>;
 }
 
 namespace Minuet::Syntax::Exprs {

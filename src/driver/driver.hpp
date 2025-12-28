@@ -30,7 +30,7 @@ namespace Minuet::Driver {
 
         [[maybe_unused]] auto generate_program(IR::CFG::FullIR& ir) -> std::optional<Runtime::Code::Program>;
 
-        [[nodiscard]] auto operator()(const std::filesystem::path& entry_source_path) -> bool;
+        [[nodiscard]] auto operator()(const std::filesystem::path& entry_source_path, std::vector<std::string> program_args) -> bool;
 
         void add_ir_dumper(Plugins::IRDumper ir_printer) noexcept;
         void add_disassembler(Plugins::Disassembler bc_printer) noexcept;

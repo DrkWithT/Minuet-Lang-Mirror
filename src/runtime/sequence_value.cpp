@@ -66,7 +66,7 @@ namespace Minuet::Runtime {
     }
 
     auto SequenceValue::get_value(std::size_t pos) -> std::optional<FastValue*> {
-        if (pos >= 0 && pos < m_items.size()) {
+        if (pos < m_items.size()) {
             return &m_items[pos];
         }
 

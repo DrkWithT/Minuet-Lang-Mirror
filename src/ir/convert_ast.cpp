@@ -85,8 +85,8 @@ namespace Minuet::IR::Convert {
         ++m_next_func_aa;
 
         return AbsAddress {
-            .id = next_fun_id,
             .tag = AbsAddrTag::immediate,
+            .id = next_fun_id,
         };
     }
 
@@ -96,8 +96,8 @@ namespace Minuet::IR::Convert {
         ++m_next_local_aa;
 
         return AbsAddress {
-            .id = next_aa_id,
             .tag = AbsAddrTag::temp,
+            .id = next_aa_id,
         };
     }
 
@@ -124,8 +124,8 @@ namespace Minuet::IR::Convert {
         m_proto_heap_objs.emplace_back(std::move(obj_box));
         
         return AbsAddress {
-            .id = next_preloaded_obj_id,
             .tag = AbsAddrTag::heap,
+            .id = next_preloaded_obj_id,
         };
     }
 
@@ -167,8 +167,8 @@ namespace Minuet::IR::Convert {
     auto ASTConversion::lookup_name_aa(const std::string& name) noexcept -> std::optional<AbsAddress> {
         if (m_native_proc_ids->contains(name)) {
             return AbsAddress {
-                .id = static_cast<int16_t>(m_native_proc_ids->at(name)),
                 .tag = AbsAddrTag::constant,
+                .id = static_cast<int16_t>(m_native_proc_ids->at(name)),
             };
         } else if (m_globals.contains(name)) {
             return m_globals[name];
@@ -272,8 +272,8 @@ namespace Minuet::IR::Convert {
                         .arg_0 = value_aa,
                         .arg_1 = item_aa,
                         .arg_2 = {
-                            .id = 1, // construct sequence in-order by pushing back...
                             .tag = AbsAddrTag::immediate,
+                            .id = 1, // construct sequence in-order by pushing back...
                         },
                         .op = Op::seq_obj_push,
                     }
@@ -419,8 +419,8 @@ namespace Minuet::IR::Convert {
         }
 
         const auto call_result_slot_aa = AbsAddress {
-            .id = static_cast<int16_t>(m_next_local_aa - real_args_n),
             .tag = AbsAddrTag::temp,
+            .id = static_cast<int16_t>(m_next_local_aa - real_args_n),
         };
 
         auto callee_aa = callee_aa_opt.value();
@@ -431,12 +431,12 @@ namespace Minuet::IR::Convert {
 
         m_result_cfgs.back().get_newest_bb().value()->steps.emplace_back(OperBinary {
             .arg_0 = {
-                .id = callee_aa.id,
                 .tag = AbsAddrTag::immediate,
+                .id = callee_aa.id,
             },
             .arg_1 = {
-                .id = real_args_n,
                 .tag = AbsAddrTag::immediate,
+                .id = real_args_n,
             },
             .op = calling_op,
         });
@@ -558,8 +558,8 @@ namespace Minuet::IR::Convert {
         m_result_cfgs.back().get_newest_bb().value()->steps.emplace_back(OperBinary {
             .arg_0 = cond_result_aa.value(),
             .arg_1 = {
-                .id = 0,
                 .tag = AbsAddrTag::immediate,
+                .id = 0,
             },
             .op = Op::jump_else,
         });
@@ -578,8 +578,8 @@ namespace Minuet::IR::Convert {
         if (cond.else_body) {
             m_result_cfgs.back().get_newest_bb().value()->steps.emplace_back(OperUnary {
                 .arg_0 = {
-                    .id = 0,
                     .tag = AbsAddrTag::immediate,
+                    .id = 0,
                 },
                 .op = Op::jump,
             });
@@ -680,8 +680,8 @@ namespace Minuet::IR::Convert {
             OperBinary {
                 .arg_0 = check_result_aa.value(),
                 .arg_1 = AbsAddress {
-                    .id = 0,
                     .tag = AbsAddrTag::immediate,
+                    .id = 0,
                 },
                 .op = Op::jump_else,
             }
@@ -698,8 +698,8 @@ namespace Minuet::IR::Convert {
         m_result_cfgs.back().get_newest_bb().value()->steps.emplace_back(
             OperUnary {
                 .arg_0 = {
-                    .id = 0,
                     .tag = AbsAddrTag::immediate,
+                    .id = 0,
                 },
                 .op = Op::jump,
             }
@@ -739,8 +739,8 @@ namespace Minuet::IR::Convert {
     auto ASTConversion::emit_break([[maybe_unused]] const Syntax::Stmts::Break& loop_brk, [[maybe_unused]] std::string_view source) -> bool {
         m_result_cfgs.back().get_newest_bb().value()->steps.emplace_back(OperUnary {
             .arg_0 = {
-                .id = 0,
                 .tag = AbsAddrTag::immediate,
+                .id = 0,
             },
             .op = Op::jump,
         });

@@ -11,6 +11,7 @@ namespace Minuet::Syntax::Stmts {
     struct StmtNode;
     struct ExprStmt;
     struct LocalDef;
+    struct DetupDef;
     struct If;
     // struct Match;
     // struct MatchCase;
@@ -23,7 +24,7 @@ namespace Minuet::Syntax::Stmts {
     struct Import;
 
     // using StmtPtr = std::unique_ptr<StmtNode<ExprStmt, LocalDef, Match, MatchCase, Block, Function>>;
-    using StmtPtr = std::unique_ptr<StmtNode<ExprStmt, LocalDef, If, Return, While, Break, Block, Function, NativeStub, Import>>;
+    using StmtPtr = std::unique_ptr<StmtNode<ExprStmt, LocalDef, DetupDef, If, Return, While, Break, Block, Function, NativeStub, Import>>;
 
     struct ExprStmt {
         Exprs::ExprPtr expr;
@@ -34,20 +35,16 @@ namespace Minuet::Syntax::Stmts {
         Exprs::ExprPtr init_expr;
     };
 
+    struct DetupDef {
+        std::vector<Frontend::Lexicals::Token> names;
+        Exprs::ExprPtr tuple_expr;
+    };
+
     struct If {
         Exprs::ExprPtr cond_expr;
         StmtPtr if_body;
         StmtPtr else_body;
     };
-
-    // struct Match {
-    //     std::vector<MatchCase> cases;
-    // };
-
-    // struct MatchCase {
-    //     std::optional<Exprs::ExprPtr> value;
-    //     StmtPtr body;
-    // };
 
     struct Return {
         Exprs::ExprPtr result;
@@ -86,7 +83,7 @@ namespace Minuet::Syntax::Stmts {
         uint32_t src_end;
     };
 
-    using Stmt = StmtNode<ExprStmt, LocalDef, If, Return, While, Break, Block, Function, NativeStub, Import>;
+    using Stmt = StmtNode<ExprStmt, LocalDef, DetupDef, If, Return, While, Break, Block, Function, NativeStub, Import>;
 }
 
 #endif

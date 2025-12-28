@@ -1,7 +1,8 @@
 argc=$#
 
 usage_exit() {
-    echo "Usage: utility.sh [help | build | unittest | run]\n\tutility.sh build <preset>\n\tutility.sh unittest\n\tutility.sh run <args>\n\tprofile <minuet-lang-file>";
+    echo "Usage: utility.sh [help | (re)build | unittest | run]\n\tutility.sh (re)build <preset>\n\tutility.sh unittest\n\tutility.sh run <args>\n\tprofile <minuet-lang-file>";
+    echo "Preset Keywords:\n\tdebug\n\trelease\n\tany-debug (for non-LLVM-Clang)\n\tany-release (for non-LLVM-Clang)";
     exit $1;
 }
 
@@ -14,13 +15,13 @@ build_status=0
 
 if [[ $action = "help" ]]; then
     usage_exit 0;
+elif [[ $action = "rebuild" && $argc -ge 2 ]]; then
+    rm -rf ./build/;
+    cmake --fresh -S . -B build --preset "local-$2-build" && cmake --build build;
 elif [[ $action = "build" && $argc -ge 2 ]]; then
     rm -f ./compile_commands.json;
-    cmake --fresh -S . -B build --preset "local-$2-build" && cmake --build build;
-
-    if [[ $? -eq 0 ]]; then
-        mv ./build/compile_commands.json .;
-    fi
+    rm -f ./build/minuetm;
+    cmake -S . -B build --preset "local-$2-build" && cmake --build build;
 elif [[ $action = "unittest" && $argc -eq 1 ]]; then
     touch ./logs/all.txt;
     ctest --test-dir build --timeout 2 -V 1> ./logs/all.txt;

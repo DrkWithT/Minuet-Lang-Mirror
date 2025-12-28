@@ -254,8 +254,8 @@ namespace Minuet::Frontend::Parsing {
 
         return std::make_unique<Expr>(Expr {
             .data = Syntax::Exprs::Call {
-                .callee = std::move(lhs_expr),
                 .args = std::move(args),
+                .callee = std::move(lhs_expr),
             },
             .src_begin = expr_begin,
             .src_end = expr_end,
@@ -488,6 +488,41 @@ namespace Minuet::Frontend::Parsing {
         });
     }
 
+    auto Parser::parse_destructure(Lexing::Lexer& lexer, std::string_view src) -> Syntax::Stmts::StmtPtr {
+        const auto stmt_begin = m_current.start;
+        consume(lexer, src, TokenType::keyword_detup);
+        consume(lexer, src, TokenType::open_bracket);
+
+        std::vector<Token> name_tokens;
+
+        consume(lexer, src, TokenType::identifier);
+        name_tokens.emplace_back(m_previous);
+
+        while (!match(m_current, TokenType::eof)) {
+            if (!match(m_current, TokenType::comma)) {
+                break;
+            }
+
+            consume(lexer, src);
+            consume(lexer, src, TokenType::identifier);
+            name_tokens.emplace_back(m_previous);
+        }
+
+        consume(lexer, src, TokenType::close_bracket);
+        consume(lexer, src, TokenType::oper_assign);
+
+        auto rhs_expr = parse_compare(lexer, src);
+
+        return std::make_unique<Stmt>(Stmt {
+            .data = Syntax::Stmts::DetupDef {
+                .names = std::move(name_tokens),
+                .tuple_expr = std::move(rhs_expr)
+            },
+            .src_begin = stmt_begin,
+            .src_end = m_current.start
+        });
+    }
+
     auto Parser::parse_if(Lexing::Lexer& lexer, std::string_view src) -> Syntax::Stmts::StmtPtr {
         const auto stmt_begin = m_current.start;
         consume(lexer, src, TokenType::keyword_if);
@@ -585,6 +620,8 @@ namespace Minuet::Frontend::Parsing {
                 switch (tag) {
                 case TokenType::keyword_def:
                     return parse_definition(lexer, src);
+                case TokenType::keyword_detup:
+                    return parse_destructure(lexer, src);
                 case TokenType::keyword_if:
                     return parse_if(lexer, src);
                 case TokenType::keyword_return:

@@ -1,0 +1,5 @@
+fun main: [] => {
+    detup [a, b] = 69420
+
+    return 0
+}
