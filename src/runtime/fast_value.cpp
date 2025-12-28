@@ -471,6 +471,8 @@ namespace Minuet::Runtime {
 
     [[nodiscard]] auto FastValue::to_string() const& -> std::string {
         switch (tag()) {
+        case FVTag::dud:
+            return "(dud)";
         case FVTag::boolean:
             return std::format("{}", m_data.scalar_v != 0);
         case FVTag::chr8:
@@ -484,8 +486,8 @@ namespace Minuet::Runtime {
         case FVTag::string:
         case FVTag::sequence:
             return m_data.obj_p->to_string();
-        case FVTag::dud:
-            return "(dud)";
+        default:
+            return "(unknown)";
         }
     }
 }
